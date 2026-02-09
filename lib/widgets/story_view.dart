@@ -824,7 +824,7 @@ class PageBarState extends State<PageBar> {
       textDirection: textDirection,
       child: Row(
         children: displayPages.map((it) {
-          final isLast = widget.pages.last == it;
+          final isLast = displayPages.last == it;
           return Expanded(
             child: Container(
               // Use EdgeInsetsDirectional instead of EdgeInsets.only(right: ...)
