@@ -32,6 +32,44 @@ to pause, forward and go to previous page.
 
 And useful callback to perform meta functionalities including vertical swipe gestures.
 
+## RTL Support 🌍
+
+The package now supports RTL (Right-to-Left) languages including Arabic, Hebrew, Persian, and Urdu!
+
+### Automatic RTL Detection
+
+The widget automatically detects text direction from the app context:
+
+```dart
+Directionality(
+  textDirection: TextDirection.rtl,
+  child: StoryView(
+    storyItems: [...],
+    controller: controller,
+  ),
+)
+```
+
+### Manual RTL Control
+
+You can explicitly set text direction:
+
+```dart
+StoryView(
+  storyItems: [...],
+  controller: controller,
+  textDirection: TextDirection.rtl, // Force RTL
+)
+```
+
+### RTL Features:
+- ✅ Progress bar flows from right to left
+- ✅ Navigation gestures reversed (tap right = previous, tap left = next)
+- ✅ Captions align correctly
+- ✅ Spacing respects text direction
+
+See `example/rtl_example.dart` for a complete example.
+
 # Installation
 
 To use this plugin, add `story_view` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).

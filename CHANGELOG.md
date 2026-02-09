@@ -1,3 +1,13 @@
+## [0.17.0] - 9 Feb 2026
+- ✨ **NEW**: Full RTL (Right-to-Left) support for Arabic, Hebrew, and other RTL languages
+- Added `textDirection` parameter to `StoryView` and `PageBar` widgets
+- Progress indicators now flow from right to left in RTL mode
+- Navigation tap gestures automatically reverse in RTL mode
+- Captions and alignment now respect text direction using `AlignmentDirectional`
+- Replaced `EdgeInsets` with `EdgeInsetsDirectional` for proper RTL spacing
+- Added RTL example in `example/rtl_example.dart`
+- Added RTL documentation to README.md
+
 ## [0.16.6] - 27 Jun 2025
 - Use stateless widgets by @geekpius
 
