@@ -41,7 +41,7 @@ class _SmartDirectionExampleState extends State<SmartDirectionExample> {
         storyItems: [
           // Arabic story - will auto-detect RTL
           StoryItem.text(
-            title: "مرحباً! 👋\n\nهذا القصة تستخدم الكشف التلقائي\n\nتم اكتشاف اتجاه النص تلقائياً!",
+            title: "مرحباً! 👋\n\nهذه القصة تستخدم الكشف التلقائي\n\nتم اكتشاف اتجاه النص تلقائياً!",
             backgroundColor: Colors.blue,
             textStyle: TextStyle(
               fontSize: 28,

@@ -46,9 +46,10 @@ void main() {
       expect(TextDirectionDetector.detect('Hello مرحباً'), TextDirection.ltr);
     });
     
-    test('handles strings with whitespace', () {
-      expect(TextDirectionDetector.detect('  مرحباً'), TextDirection.ltr); // starts with space
-      expect(TextDirectionDetector.detect('\nمرحباً'), TextDirection.ltr); // starts with newline
+    test('handles strings with leading whitespace', () {
+      expect(TextDirectionDetector.detect('  مرحباً'), TextDirection.rtl); // skips leading spaces
+      expect(TextDirectionDetector.detect('\nمرحباً'), TextDirection.rtl); // skips leading newline
+      expect(TextDirectionDetector.detect('  Hello'), TextDirection.ltr); // skips leading spaces
     });
     
     test('detects Arabic presentation forms', () {

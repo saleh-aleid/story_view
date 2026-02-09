@@ -635,11 +635,18 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
   /// Detects text direction from story items
   /// Scans story items to find text content and determines direction automatically
+  /// 
+  /// Note: This method detects text direction by examining the widget structure
+  /// of StoryItem.text items (Container > Center > Text). If the internal structure
+  /// of StoryItem.text changes, this detection may need to be updated.
+  /// For custom story items with text, consider explicitly setting textDirection.
   TextDirection _detectDirectionFromStories() {
     // Try to find a StoryItem.text with actual text content
     for (var item in widget.storyItems) {
-      if (item?.view is Container) {
-        final container = item!.view as Container;
+      if (item == null) continue;
+      
+      if (item.view is Container) {
+        final container = item.view as Container;
         if (container.child is Center) {
           final center = container.child as Center;
           if (center.child is Text) {

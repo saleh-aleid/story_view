@@ -11,7 +11,11 @@ class TextDirectionDetector {
   static TextDirection detect(String text) {
     if (text.isEmpty) return TextDirection.ltr;
     
-    final firstCharCode = text.runes.first;
+    // Skip leading whitespace to find the first meaningful character
+    final trimmedText = text.trimLeft();
+    if (trimmedText.isEmpty) return TextDirection.ltr;
+    
+    final firstCharCode = trimmedText.runes.first;
     
     // RTL Unicode ranges / نطاقات Unicode للغات RTL
     // Hebrew: 0x0590 - 0x05FF
