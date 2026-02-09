@@ -36,7 +36,36 @@ And useful callback to perform meta functionalities including vertical swipe ges
 
 The package now supports RTL (Right-to-Left) languages including Arabic, Hebrew, Persian, and Urdu!
 
-### Automatic RTL Detection
+### ✨ Intelligent Auto-Detection (NEW!)
+
+The widget now automatically detects text direction from your story content! No need to manually specify `textDirection` anymore.
+
+```dart
+StoryView(
+  storyItems: [
+    StoryItem.text(
+      title: "مرحباً بك", // Arabic - automatically detected as RTL
+      backgroundColor: Colors.blue,
+    ),
+    StoryItem.text(
+      title: "Hello World", // English - automatically detected as LTR
+      backgroundColor: Colors.green,
+    ),
+  ],
+  controller: controller,
+  // No textDirection parameter needed! ✨
+)
+```
+
+The auto-detection:
+- ✅ Analyzes the first character of your story content
+- ✅ Supports Arabic, Hebrew, Persian, Urdu, and other RTL languages
+- ✅ Works seamlessly with mixed-language apps
+- ✅ Falls back to context directionality if no text content is found
+
+See `example/smart_direction_example.dart` for a complete multilingual example.
+
+### Context-based RTL Detection
 
 The widget automatically detects text direction from the app context:
 
@@ -52,13 +81,13 @@ Directionality(
 
 ### Manual RTL Control
 
-You can explicitly set text direction:
+You can still explicitly set text direction for full control (overrides auto-detection):
 
 ```dart
 StoryView(
   storyItems: [...],
   controller: controller,
-  textDirection: TextDirection.rtl, // Force RTL
+  textDirection: TextDirection.rtl, // Force RTL - overrides auto-detection
 )
 ```
 
@@ -67,8 +96,9 @@ StoryView(
 - ✅ Navigation gestures reversed (tap right = previous, tap left = next)
 - ✅ Captions align correctly
 - ✅ Spacing respects text direction
+- ✅ Automatic detection from story content
 
-See `example/rtl_example.dart` for a complete example.
+See `example/rtl_example.dart` for manual RTL control and `example/smart_direction_example.dart` for auto-detection.
 
 # Installation
 

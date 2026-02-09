@@ -3,3 +3,4 @@ export 'widgets/story_video.dart';
 export 'widgets/story_view.dart';
 export 'controller/story_controller.dart';
 export 'utils.dart';
+export 'utils/text_direction_detector.dart';
