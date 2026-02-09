@@ -52,6 +52,19 @@ void main() {
       expect(TextDirectionDetector.detect('  Hello'), TextDirection.ltr); // skips leading spaces
     });
     
+    test('handles edge cases with special characters and numbers', () {
+      // Numbers followed by RTL
+      expect(TextDirectionDetector.detect('123 مرحباً'), TextDirection.ltr); // starts with number
+      // Special characters followed by RTL
+      expect(TextDirectionDetector.detect('!مرحباً'), TextDirection.ltr); // starts with !
+      expect(TextDirectionDetector.detect('# مرحباً'), TextDirection.ltr); // starts with #
+      // Special characters followed by LTR
+      expect(TextDirectionDetector.detect('!Hello'), TextDirection.ltr); // starts with !
+      expect(TextDirectionDetector.detect('# Hello'), TextDirection.ltr); // starts with #
+      // Whitespace + number + RTL
+      expect(TextDirectionDetector.detect('  123 مرحباً'), TextDirection.ltr); // first non-whitespace is number
+    });
+    
     test('detects Arabic presentation forms', () {
       // Arabic Presentation Forms-A range (0xFB50 - 0xFDFF)
       expect(TextDirectionDetector.detect('\uFB50'), TextDirection.rtl);
