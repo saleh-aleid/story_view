@@ -195,7 +195,7 @@ class StoryItem {
                   margin: EdgeInsets.only(bottom: 16),
                   padding: captionOuterPadding?? EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   child: Align(
-                    alignment: Alignment.bottomLeft,
+                    alignment: AlignmentDirectional.bottomStart,
                     child: Container(
                       child: caption?? const SizedBox.shrink(),
                       width: double.infinity,
@@ -356,7 +356,7 @@ class StoryItem {
             vertical: 8,
           ),
           child: Align(
-            alignment: Alignment.bottomLeft,
+            alignment: AlignmentDirectional.bottomStart,
             child: Container(
               child: caption == null ? SizedBox() : caption,
               width: double.infinity,
@@ -415,6 +415,10 @@ class StoryView extends StatefulWidget {
   /// Use this if you want to give outer padding to the indicator
   final EdgeInsetsGeometry indicatorOuterPadding;
 
+  /// Text direction for RTL support. If not provided, it will use the 
+  /// ambient directionality from the context.
+  final TextDirection? textDirection;
+
   StoryView({
     required this.storyItems,
     required this.controller,
@@ -428,6 +432,7 @@ class StoryView extends StatefulWidget {
     this.indicatorForegroundColor,
     this.indicatorHeight = IndicatorHeight.large,
     this.indicatorOuterPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8,),
+    this.textDirection,
   });
 
   @override
@@ -629,6 +634,8 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final textDirection = widget.textDirection ?? Directionality.of(context);
+    
     return Container(
       color: Colors.white,
       child: Stack(
@@ -654,6 +661,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
                     indicatorHeight: widget.indicatorHeight,
                     indicatorColor: widget.indicatorColor,
                     indicatorForegroundColor: widget.indicatorForegroundColor,
+                    textDirection: textDirection,
                   ),
                 ),
               ),
@@ -670,11 +678,23 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
                   widget.controller.play();
                 },
                 onTapUp: (details) {
-                  // if debounce timed out (not active) then continue anim
-                  if (_nextDebouncer?.isActive == false) {
-                    widget.controller.play();
+                  final screenWidth = MediaQuery.of(context).size.width;
+                  final dx = details.globalPosition.dx;
+                  
+                  // REVERSE TAP ZONES FOR RTL
+                  final isLeftTap = textDirection == TextDirection.rtl 
+                      ? dx > screenWidth / 2 
+                      : dx < screenWidth / 2;
+                  
+                  if (isLeftTap) {
+                    widget.controller.previous();
                   } else {
-                    widget.controller.next();
+                    // if debounce timed out (not active) then continue anim
+                    if (_nextDebouncer?.isActive == false) {
+                      widget.controller.play();
+                    } else {
+                      widget.controller.next();
+                    }
                   }
                 },
                 onVerticalDragStart: widget.onVerticalSwipeComplete == null
@@ -713,7 +733,9 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
                       },
               )),
           Align(
-            alignment: Alignment.centerLeft,
+            alignment: textDirection == TextDirection.rtl 
+                ? Alignment.centerRight 
+                : Alignment.centerLeft,
             heightFactor: 1,
             child: SizedBox(
                 child: GestureDetector(onTap: () {
@@ -744,6 +766,7 @@ class PageBar extends StatefulWidget {
   final IndicatorHeight indicatorHeight;
   final Color? indicatorColor;
   final Color? indicatorForegroundColor;
+  final TextDirection? textDirection;
 
   PageBar(
     this.pages,
@@ -751,6 +774,7 @@ class PageBar extends StatefulWidget {
     this.indicatorHeight = IndicatorHeight.large,
     this.indicatorColor,
     this.indicatorForegroundColor,
+    this.textDirection,
     Key? key,
   }) : super(key: key);
 
@@ -788,22 +812,36 @@ class PageBarState extends State<PageBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: widget.pages.map((it) {
-        return Expanded(
-          child: Container(
-            padding: EdgeInsets.only(
-                right: widget.pages.last == it ? 0 : this.spacing),
-            child: StoryProgressIndicator(
-              isPlaying(it) ? widget.animation!.value : (it.shown ? 1 : 0),
-              indicatorHeight:
-                  widget.indicatorHeight == IndicatorHeight.large ? 5 : widget.indicatorHeight == IndicatorHeight.medium ? 3 : 2,
-              indicatorColor: widget.indicatorColor,
-              indicatorForegroundColor: widget.indicatorForegroundColor,
+    // Get text direction from widget parameter or context
+    final textDirection = widget.textDirection ?? Directionality.of(context);
+    
+    // Reverse pages for RTL
+    final displayPages = textDirection == TextDirection.rtl 
+        ? widget.pages.reversed.toList() 
+        : widget.pages;
+
+    return Directionality(
+      textDirection: textDirection,
+      child: Row(
+        children: displayPages.map((it) {
+          final isLast = displayPages.last == it;
+          return Expanded(
+            child: Container(
+              // Use EdgeInsetsDirectional instead of EdgeInsets.only(right: ...)
+              padding: EdgeInsetsDirectional.only(
+                end: isLast ? 0 : this.spacing,
+              ),
+              child: StoryProgressIndicator(
+                isPlaying(it) ? widget.animation!.value : (it.shown ? 1 : 0),
+                indicatorHeight:
+                    widget.indicatorHeight == IndicatorHeight.large ? 5 : widget.indicatorHeight == IndicatorHeight.medium ? 3 : 2,
+                indicatorColor: widget.indicatorColor,
+                indicatorForegroundColor: widget.indicatorForegroundColor,
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }
